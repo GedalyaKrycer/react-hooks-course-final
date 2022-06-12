@@ -17,13 +17,13 @@ export default function Loading({ text = "Loading", speed = 100 }) {
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      content === text + "..."
-        ? setContent(text)
-        : setContent((c) => `${content}.`);
+      setContent((content) => {
+        content === `${text}...` ? text : `${content}.`;
+      });
     }, speed);
 
     return () => window.clearInterval(interval);
-  }, []);
+  }, [text, speed]);
 
   return <p style={styles.content}>{content}</p>;
 }
