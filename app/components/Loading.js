@@ -12,7 +12,7 @@ const styles = {
   },
 };
 
-export default function Loading({ text, speed }) {
+export default function Loading({ text = "Loading", speed = 100 }) {
   const [content, setContent] = useState(text);
 
   useEffect(() => {
@@ -29,11 +29,6 @@ export default function Loading({ text, speed }) {
 }
 
 Loading.propTypes = {
-  text: PropTypes.string.isRequired,
-  speed: PropTypes.number.isRequired,
-};
-
-Loading.defaultProps = {
-  text: "Loading",
-  speed: 100,
+  text: PropTypes.string,
+  speed: PropTypes.number,
 };
