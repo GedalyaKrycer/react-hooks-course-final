@@ -119,25 +119,15 @@ PlayerPreview.propTypes = {
   label: PropTypes.string.isRequired,
 };
 
-const initialPlayers = {
-  one: null,
-  two: null,
-};
-
 export default function Battle() {
-  const [players, setPlayers] = useState(initialPlayers);
+  const [playerOne, setPlayerOne] = useState(null);
+  const [playerTwo, setPlayerTwo] = useState(null);
 
   function handleSubmit(id, player) {
-    setPlayers({
-      ...players,
-      [id]: player,
-    });
+    id === "playerOne" ? setPlayerOne(player) : setPlayerTwo(player);
   }
   function handleReset(id) {
-    setPlayers({
-      ...players,
-      [id]: null,
-    });
+    id === "playerOne" ? setPlayerOne(null) : setPlayerTwo(null);
   }
 
   return (
@@ -147,39 +137,39 @@ export default function Battle() {
       <div className="players-container">
         <h1 className="center-text header-lg">Players</h1>
         <div className="row space-around">
-          {players.one === null ? (
+          {playerOne === null ? (
             <PlayerInput
               label="Player One"
-              onSubmit={(player) => handleSubmit("one", player)}
+              onSubmit={(player) => handleSubmit("playerOne", player)}
             />
           ) : (
             <PlayerPreview
-              username={players.one}
+              username={playerOne}
               label="Player One"
-              onReset={() => handleReset("one")}
+              onReset={() => handleReset("playerOne")}
             />
           )}
 
-          {players.two === null ? (
+          {playerTwo === null ? (
             <PlayerInput
               label="Player Two"
-              onSubmit={(player) => handleSubmit("two", player)}
+              onSubmit={(player) => handleSubmit("playerTwo", player)}
             />
           ) : (
             <PlayerPreview
-              username={players.two}
+              username={playerTwo}
               label="Player Two"
-              onReset={() => handleReset("two")}
+              onReset={() => handleReset("playerTwo")}
             />
           )}
         </div>
 
-        {players.one && players.two && (
+        {playerOne && playerTwo && (
           <Link
             className="btn dark-btn btn-space"
             to={{
               pathname: "/battle/results",
-              search: `?playerOne=${players.one}&playerTwo=${players.two}`,
+              search: `?playerOne=${playerOne}&playerTwo=${playerTwo}`,
             }}
           >
             Battle
