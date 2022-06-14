@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { battle } from "../utils/api";
 import {
   FaCompass,
@@ -54,27 +54,45 @@ ProfileList.propTypes = {
   profile: PropTypes.object.isRequired,
 };
 
+function battleReducer(state, action) {
+  switch (action.type) {
+    case "success":
+      return {
+        winner: action.winner,
+        loser: action.loser,
+        error: null,
+        loading: false,
+      };
+    case "error":
+      return {
+        ...state,
+        error: action.message,
+        loading: false,
+      };
+
+    default:
+      throw new Error("This action type isn't supported");
+  }
+}
+
 export default function Results({ location }) {
-  const [winner, setWinner] = useState(null);
-  const [loser, setLoser] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { playerOne, playerTwo } = queryString.parse(location.search);
+  const [state, dispatch] = useReducer(battleReducer, {
+    winner: null,
+    loser: null,
+    error: null,
+    loading: true,
+  });
 
   useEffect(() => {
-    const { playerOne, playerTwo } = queryString.parse(location.search);
-
     battle([playerOne, playerTwo])
-      .then((players) => {
-        setWinner(players[0]);
-        setLoser(players[1]);
-        setError(null);
-        setLoading(false);
-      })
-      .catch(({ message }) => {
-        setError(message);
-        setLoading(false);
-      });
-  }, []);
+      .then((players) =>
+        dispatch({ type: "success", winner: players[0], loser: players[1] })
+      )
+      .catch(({ message }) => dispatch({ type: "error", error: message }));
+  }, [playerOne, playerTwo]);
+
+  const { winner, loser, error, loading } = state;
 
   if (loading === true) {
     return <Loading text="Battling" />;
